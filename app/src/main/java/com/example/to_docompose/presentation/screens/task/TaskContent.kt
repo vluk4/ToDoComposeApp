@@ -13,6 +13,7 @@ import com.example.to_docompose.components.PriorityDropDown
 import com.example.to_docompose.data.models.Priority
 import com.example.to_docompose.presentation.theme.LARGE_PADDING
 import com.example.to_docompose.presentation.theme.MEDIUM_PADDING
+import com.example.to_docompose.R
 
 @Composable
 fun TaskContent(

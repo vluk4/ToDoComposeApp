@@ -35,13 +35,13 @@ fun ListContent(
                 tasks = searchedTasks.data,
                 navigateToTaskScreen = navigateToTaskScreen
             )
-        } else {
-            if (allTasks is RequestState.Success) {
-                HandleListContent(
-                    tasks = allTasks.data,
-                    navigateToTaskScreen = navigateToTaskScreen
-                )
-            }
+        }
+    } else {
+        if (allTasks is RequestState.Success) {
+            HandleListContent(
+                tasks = allTasks.data,
+                navigateToTaskScreen = navigateToTaskScreen
+            )
         }
     }
 }

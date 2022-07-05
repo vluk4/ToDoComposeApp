@@ -61,8 +61,8 @@ class SharedViewModel @Inject constructor(
     }
 
     fun getAllTasks() = viewModelScope.launch {
+        _allTasks.value = RequestState.Loading
         runCatching {
-            _allTasks.value = RequestState.Loading
             repository.getAllTasks.collect {
                 _allTasks.value = RequestState.Success(it)
             }
@@ -103,7 +103,7 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    private fun deleteTask() {
+    private fun deleteTasks() {
         viewModelScope.launch {
             val toDoTask = ToDoTask(
                 id = id.value,
@@ -115,12 +115,18 @@ class SharedViewModel @Inject constructor(
         }
     }
 
+    private fun deleteAllTask() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteAllTask()
+        }
+    }
+
     fun handleDatabaseActions(action: Action) {
         when(action) {
             Action.ADD -> addTask()
             Action.UPDATE -> updateTask()
-            Action.DELETE -> deleteTask()
-            Action.DELETE_ALL -> {}
+            Action.DELETE -> deleteTasks()
+            Action.DELETE_ALL -> deleteAllTask()
             Action.UNDO -> addTask()
             Action.NO_ACTION -> Unit
         }
