@@ -14,9 +14,7 @@ import com.example.to_docompose.util.RequestState
 import com.example.to_docompose.util.SearchAppBarState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -48,6 +46,24 @@ class SharedViewModel @Inject constructor(
     private val _selectedTask: MutableStateFlow<ToDoTask?> = MutableStateFlow(null)
     val selectedTask: StateFlow<ToDoTask?> = _selectedTask
 
+    private val _sortState =
+        MutableStateFlow<RequestState<Priority>>(RequestState.Idle)
+    val sortState: StateFlow<RequestState<Priority>> = _sortState
+
+    val lowPriorityTasks: StateFlow<List<ToDoTask>> =
+        repository.sortByLowPriority.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            emptyList()
+        )
+
+    val highPriorityTasks: StateFlow<List<ToDoTask>> =
+        repository.sortByLowPriority.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            emptyList()
+        )
+
     fun searchDatabase(searchQuery:String) = viewModelScope.launch {
         runCatching {
             _searchedTasks.value = RequestState.Loading
@@ -60,6 +76,25 @@ class SharedViewModel @Inject constructor(
             _searchedTasks.value = RequestState.Error(it)
         }
         searchAppBarState.value = SearchAppBarState.TRIGGERED
+    }
+
+    fun persistSortingState(priority: Priority) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStoreRepository.persistSortState(priority)
+        }
+    }
+
+    fun readSortState() = viewModelScope.launch {
+        _sortState.value = RequestState.Loading
+        runCatching {
+            dataStoreRepository.readSortState
+                .map { Priority.valueOf(it) }
+                .collect {
+                    _sortState.value = RequestState.Success(it)
+            }
+        }.getOrElse {
+            _sortState.value = RequestState.Error(it)
+        }
     }
 
     fun getAllTasks() = viewModelScope.launch {
