@@ -1,5 +1,6 @@
 package com.example.to_docompose.presentation.screens.list
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -14,6 +15,7 @@ import com.example.to_docompose.util.Action
 import com.example.to_docompose.util.SearchAppBarState
 import kotlinx.coroutines.launch
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
@@ -41,7 +43,7 @@ fun ListScreen(
 
     DisplaySnackBar(
         scaffoldState = scaffoldState,
-        handleDatabaseActions = { sharedViewModel.handleDatabaseActions(action = action) },
+        onComplete = { sharedViewModel.action.value = it },
         onUndoClicked = {
           sharedViewModel.action.value = it
         },
@@ -99,13 +101,11 @@ fun ListFab(
 @Composable
 fun DisplaySnackBar(
     scaffoldState: ScaffoldState,
-    handleDatabaseActions: () -> Unit,
+    onComplete: (Action) -> Unit,
     onUndoClicked: (Action) -> Unit,
     taskTitle: String,
     action: Action
 ) {
-    handleDatabaseActions()
-
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = action, block = {
@@ -121,6 +121,7 @@ fun DisplaySnackBar(
                     onUndoClicked = onUndoClicked
                 )
             }
+            onComplete(Action.NO_ACTION)
         }
     })
 }

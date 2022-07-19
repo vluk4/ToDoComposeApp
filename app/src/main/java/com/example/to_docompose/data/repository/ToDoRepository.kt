@@ -15,19 +15,19 @@ class ToDoRepository @Inject constructor(private val toDoDao: ToDoDao) {
 
     fun getSelectedTask(taskId: Int): Flow<ToDoTask> = toDoDao.getSelectedTask(taskId)
 
-    suspend fun addTask(task: ToDoTask) {
+    fun addTask(task: ToDoTask) {
         toDoDao.addTask(task)
     }
 
-    suspend fun updateTask(task: ToDoTask) {
+    fun updateTask(task: ToDoTask) {
         toDoDao.updateTask(task)
     }
 
-    suspend fun deleteTask(task: ToDoTask) {
+    fun deleteTask(task: ToDoTask) {
         toDoDao.deleteTask(task)
     }
 
-    suspend fun deleteAllTask() {
+    fun deleteAllTask() {
         toDoDao.deleteAllTask()
     }
 
