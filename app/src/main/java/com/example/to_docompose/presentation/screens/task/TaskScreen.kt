@@ -1,5 +1,6 @@
 package com.example.to_docompose.presentation.screens.task
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -13,6 +14,7 @@ import com.example.to_docompose.data.models.ToDoTask
 import com.example.to_docompose.presentation.viewmodel.SharedViewModel
 import com.example.to_docompose.util.Action
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun TaskScreen(
     selectedTask: ToDoTask?,
